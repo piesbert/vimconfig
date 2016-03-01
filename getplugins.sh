@@ -8,7 +8,7 @@ INSTALL_ALL=false
 if [ -d $BUNDLE_DIR ]; then
         echo "Warning!!! There are some plugins installed already."
         echo "If you want to continue then old plugins will be erased."
-        read -r -p "Do you want to continue? (y/N)? " RESPONSE
+        read -r -p "Do you want to continue? (y/N) " RESPONSE
         case $RESPONSE in
                 [yY][eE][sS]|[yY])
                         ;;
