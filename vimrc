@@ -4,12 +4,16 @@ execute pathogen#infect()
 
 set backspace=indent,eol,start
 set cmdheight=2
-set expandtab
 set noautoindent
 set nosmartindent
 set fileencoding=utf-8
 set fileformats=unix,dos,mac
 set nu
+
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set expandtab
 
 set laststatus=2
 set statusline=
