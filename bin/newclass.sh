@@ -43,11 +43,12 @@ deleteCheck() {
 }
 
 createHeader() {
-        INCLUDE_LOCK="ILOCK_${PROJECT_NAME^^}_${CLASS_NAME^^}_HPP"
+        INCLUDE_LOCK="H`uuidgen|sed -e 's/-/_/g'`"
+        INCLUDE_LOCK=${INCLUDE_LOCK^^}
         NAMESPACE="${PROJECT_NAME,,}" 
         deleteCheck $HEADER_FILE
         fileComment $PROJECT_NAME $HEADER_FILE
-        echo "#if !defined($INCLUDE_LOCK)" >> $HEADER_FILE 
+        echo "#ifndef $INCLUDE_LOCK" >> $HEADER_FILE 
         echo "#define $INCLUDE_LOCK" >> $HEADER_FILE 
         echo "" >> $HEADER_FILE
         echo "namespace $NAMESPACE {" >> $HEADER_FILE
