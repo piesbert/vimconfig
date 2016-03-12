@@ -29,11 +29,11 @@ mkdir -p backup/undo
 
 echo "Installing..."
 
-#rm -rf bundle
-#mkdir -p bundle
+rm -rf bundle
+mkdir -p bundle
 
-#git clone https://github.com/Valloric/YouCompleteMe.git bundle/youcompleteme
-#cd $BUNDLE_DIR
-#git submodule update --init --recursive
-#./install.py --clang-completer
+git clone https://github.com/Valloric/YouCompleteMe.git bundle/youcompleteme
+cd $BUNDLE_DIR/youcompleteme
+git submodule update --init --recursive
+./install.py --clang-completer
 
