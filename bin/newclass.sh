@@ -4,6 +4,7 @@ PROJECT_NAME=`git remote -v|head -n1|awk '{print $2}'|sed -e 's,.*:\(.*/\)\?,,' 
 AUTHOR_NAME=`git config user.name`
 AUTHOR_EMAIL=`git config user.email`
 CLASS_NAME="Test"
+INTERFACE_FILE="itest.hpp"
 HEADER_FILE="test.hpp"
 SOURCE_FILE="test.cpp"
 
@@ -42,8 +43,32 @@ deleteCheck() {
         fi
 }
 
+createInterface() {
+        INCLUDE_LOCK="H`uuidcdef -u|sed -e 's/-/_/g'`"
+        INCLUDE_LOCK=${INCLUDE_LOCK^^}
+        NAMESPACE="${PROJECT_NAME,,}" 
+        deleteCheck $INTERFACE_FILE
+        fileComment $PROJECT_NAME $INTERFACE_FILE
+        echo "#ifndef $INCLUDE_LOCK" >> $INTERFACE_FILE 
+        echo "#define $INCLUDE_LOCK" >> $INTERFACE_FILE 
+        echo "" >> $INTERFACE_FILE
+        echo "namespace $NAMESPACE {" >> $INTERFACE_FILE
+        echo "namespace interface {" >> $INTERFACE_FILE
+        echo "" >> $INTERFACE_FILE
+        echo "class I$CLASS_NAME {" >> $INTERFACE_FILE
+        echo "public:" >> $INTERFACE_FILE
+        echo "    virtual ~I$CLASS_NAME() {};" >> $INTERFACE_FILE
+        echo "};" >> $INTERFACE_FILE
+        echo "" >> $INTERFACE_FILE
+        echo "} // namespace interface" >> $INTERFACE_FILE
+        echo "} // namespace $NAMESPACE" >> $INTERFACE_FILE
+        echo "" >> $INTERFACE_FILE
+        echo "#endif // $INCLUDE_LOCK" >> $INTERFACE_FILE
+    
+}
+
 createHeader() {
-        INCLUDE_LOCK="H`uuidgen|sed -e 's/-/_/g'`"
+        INCLUDE_LOCK="H`uuidcdef -u|sed -e 's/-/_/g'`"
         INCLUDE_LOCK=${INCLUDE_LOCK^^}
         NAMESPACE="${PROJECT_NAME,,}" 
         deleteCheck $HEADER_FILE
@@ -51,16 +76,18 @@ createHeader() {
         echo "#ifndef $INCLUDE_LOCK" >> $HEADER_FILE 
         echo "#define $INCLUDE_LOCK" >> $HEADER_FILE 
         echo "" >> $HEADER_FILE
+        echo "#include \"$INTERFACE_FILE\"" >> $HEADER_FILE
+        echo "" >> $HEADER_FILE
         echo "namespace $NAMESPACE {" >> $HEADER_FILE
         echo "" >> $HEADER_FILE
-        echo "class $CLASS_NAME {" >> $HEADER_FILE
+        echo "class $CLASS_NAME: public interface::I$CLASS_NAME {" >> $HEADER_FILE
         echo "public:" >> $HEADER_FILE
-        echo "        $CLASS_NAME();" >> $HEADER_FILE
-        echo "        virtual ~$CLASS_NAME();" >> $HEADER_FILE
+        echo "    $CLASS_NAME();" >> $HEADER_FILE
+        echo "    virtual ~$CLASS_NAME();" >> $HEADER_FILE
         echo "" >> $HEADER_FILE
         echo "private:" >> $HEADER_FILE
-        echo "        $CLASS_NAME(const $CLASS_NAME&) = delete;" >> $HEADER_FILE
-        echo "        $CLASS_NAME& operator=(const $CLASS_NAME&) = delete;" >> $HEADER_FILE
+        echo "    $CLASS_NAME(const $CLASS_NAME&) = delete;" >> $HEADER_FILE
+        echo "    $CLASS_NAME& operator=(const $CLASS_NAME&) = delete;" >> $HEADER_FILE
         echo "};" >> $HEADER_FILE
         echo "" >> $HEADER_FILE
         echo "} // namespace $NAMESPACE" >> $HEADER_FILE
@@ -98,6 +125,8 @@ testCompile() {
 } 
 
 generate() {
+        echo "Generating interface file: $INTERFACE_FILE..."
+        createInterface
         echo "Generating header file: $HEADER_FILE..."
         createHeader
         echo "Generating source file: $SOURCE_FILE..."
@@ -110,7 +139,10 @@ if [ "$1" == "" ]; then
         exit 0
 fi
 
+mkdir -p interface
+
 CLASS_NAME="$1"
+INTERFACE_FILE="interface/i${1,,}.hpp"
 HEADER_FILE="${1,,}.hpp"
 SOURCE_FILE="${1,,}.cpp"
 
